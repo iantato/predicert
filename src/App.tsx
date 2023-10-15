@@ -20,11 +20,16 @@ function App() {
   // @ts-ignore
   const [pubKey, setPubKey] = useState(null)
   const [buttonText, setButtonText] = useState("Connect Phantom Wallet")
-  const [commentHidden, setHidden] = useState(false)
+  const [fetchedData, setFetchedState] = useState(false)
   
   const [yesPercentage, setYes] = useState(0)
   const [noPercentage, setNo] = useState(0)
 
+  const initialVotes: {}= []
+  const [votes, setVotes] = useState(initialVotes)
+
+
+  const limit = 10
   // - Get information from the Phantom Wallet.
   // ---------------------------------------
   const url = clusterApiUrl("devnet")
@@ -107,7 +112,6 @@ function App() {
       systemProgram: web3.SystemProgram.programId,
     }).rpc()
 
-
   }
 
   async function addNo() {
@@ -139,7 +143,20 @@ function App() {
     // @ts-ignore
     Promise.all((await connection.getProgramAccounts(programID)).map(async(tx, index) => {
       const messageAccount = program.account.messageAccount.fetch(tx.pubkey)
+      const item = {index: 0, pubkey: "", msg: ""}
+      
+      item["index"] = index
+      item["pubkey"] = tx.pubkey.toString()
+      .substring(0, 10) + "..." + tx.pubkey.toString().substring(tx.pubkey.toString().length - 10, tx.pubkey.toString().length)
+      
       messageAccount.then((msg) => {
+
+        // @ts-ignore
+        item["msg"] = msg.msg.toString()
+
+        // @ts-ignore
+        setVotes(current => [...current, item])
+
         // @ts-ignore
         if (msg.msg.toString() == "Yes") {
           yesCounter++
@@ -151,10 +168,10 @@ function App() {
       })
     }))
 
-    setHidden(true)
+    setFetchedState(true)
   }
   // ---------------------------------------
-
+  
   return (
     <>
       <div id="frame">
@@ -194,13 +211,13 @@ function App() {
             </div>
 
             <div>
-              <button onClick={fetchData}>
+              <button onClick={fetchData} disabled={fetchedData}>
                 <span className="pink">&#60;</span>
                 <span className="red">Fetch Data&#47;</span>
                 <span className="pink">&#62;</span>
               </button>
             </div>
-            {commentHidden ? (
+            {fetchedData ? (
             <div id="results">
               <span className="gray">
               &#47;&#47; {yesPercentage}&#37; voted 'Yes', while {noPercentage}&#37; voted 'No'
@@ -209,6 +226,24 @@ function App() {
             ) : (<div></div>)
             }
 
+          </div>
+
+          <div id="history">
+            
+            {!fetchedData ? (
+              <h2> <span className="gray"> History </span> </h2>
+            ) : (<div> </div>)}
+
+            {/* @ts-ignore */}
+            {votes.map((element, index) => {
+              if (index < limit) {
+                return (
+                  <div key={index} className="historyItems">
+                    <p><span className="purple">{element.pubkey}</span> voted {element.msg}</p>
+                  </div>
+                )
+              }
+            })}
           </div>
         </div>
       </div>

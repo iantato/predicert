@@ -1,3 +1,17 @@
+.purple {
+  color: #B79DFF;
+}
+
+.pink {
+  color: #DE4BA3;
+}
+.red {
+  color: #F7768E;
+}
+
+.gray {
+  color: #434454;
+}
 
 #frame {
   display: flex;
@@ -24,7 +38,7 @@
 #title h1 {
   color: inherit;
 
-  margin-left: 15%;
+  margin-left: 13%;
 }
 
 #title img {
@@ -49,7 +63,7 @@
 
   padding: 10px 15px 10px 15px;
   margin-left: auto;
-  margin-right: 15%;
+  margin-right: 13%;
 
   min-width: 270px;
 
@@ -74,7 +88,7 @@
 
   border-radius: 20px;
 
-  width: 70%;
+  width: 50%;
   height: 50vh;
 
   box-shadow: #141418 0 10px 20px;
@@ -96,18 +110,38 @@
   cursor: pointer;
 }
 
-#content .purple {
-  color: #B79DFF;
+#history {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  justify-self: center;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #141418;
+
+  border-radius: 20px;
+  margin-left: 15px;
+
+  width: 25%;
+  height: 50vh;
+
+  white-space: normal;
+  overflow: hidden;
+
+  box-shadow: #141418 0 10px 20px;
 }
 
-#content .pink {
-  color: #DE4BA3;
+.historyItems {
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  margin-bottom: 5px;
 }
 
-#content .red {
-  color: #F7768E;
-}
-
-#content .gray {
-  color: #434454;
+.historyItems p {
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

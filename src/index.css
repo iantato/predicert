@@ -1,0 +1,24 @@
+:root {
+  font-family: "Onest", sans-serif;
+  font-size: 16px;
+  color: whitesmoke;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -mos-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+}
+
+body, html {
+  width: 100%;
+  min-height: 100%;
+  overflow: hidden;
+
+  background-color: #1A1B26;
+}

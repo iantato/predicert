@@ -5,7 +5,7 @@ import { Program, AnchorProvider, web3 } from '@project-serum/anchor'
 import buffer from 'buffer'
 
 import { getProvider } from './utils'
-import idl from '../public/idl/sendvote.json'
+import idl from './idl/sendvote.json'
 
 import phantomLogo from './assets/phantom.svg'
 import './App.css'

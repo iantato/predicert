@@ -17,6 +17,19 @@ function App() {
   window.Buffer = buffer.Buffer
   const anyWindow: any = window
 
+  // - Initialization of all the useState variables used in the web-application.
+  //   
+  //   pubKey, setPubkey -> For setting the text of phantom button to public key,
+  //                        it is used along with buttonText.
+  //   buttonText, setButtonText -> For setting the text of phantom button, literally.
+  //   fetchedData, setFetchedState -> A true or false value that is used to check if
+  //                                   the data has already been gathered or not. The
+  //                                   true or false value is used a lot in the program.
+  //   yesPercentage, setYes -> A counter for the fetched data percentage.
+  //   noPercentage, setNo -> A counter for the fetched data percentage.
+  //   initialVotes, votes, setVotes -> These variables are used in order to store the
+  //                                    fetched data and display them to the interface.
+  //
   // @ts-ignore
   const [pubKey, setPubKey] = useState(null)
   const [buttonText, setButtonText] = useState("Connect Phantom Wallet")
@@ -28,10 +41,12 @@ function App() {
   const initialVotes: {}= []
   const [votes, setVotes] = useState(initialVotes)
 
-
+  // Set the limit of the displayed fetched data.
   const limit = 10
-  // - Get information from the Phantom Wallet.
-  // ---------------------------------------
+
+  // - Initialize the Phantom Wallet as well as the AnchorProvider.
+  //   This block also includes the parsing of the Program ID along with
+  //   the idl.json from the anchor deployment program.
   const url = clusterApiUrl("devnet")
   const connection = new Connection(url, 'processed')
   
@@ -43,9 +58,8 @@ function App() {
   const stringedIDL = JSON.stringify(idl)
   const parsedIDL = JSON.parse(stringedIDL)
   const program = new Program(parsedIDL, idl.metadata.address, anchorProvider)
-  // ---------------------------------------
 
-  // - Handle Connection
+  // - Handle connection when the Connect button is clicked.
   const handleConnection = useCallback(async() => {
     if (!provider) return
 
@@ -62,6 +76,9 @@ function App() {
   }, [provider])
 
   // - Handle Automatic Connection and Public Key Management.
+  // - Substrings are used in order to display the public key in
+  //   a more compact manner so that it doesn't occupy the whole
+  //   screen.
   useEffect(() => {
     if (!provider) return
 
@@ -92,20 +109,26 @@ function App() {
       }
     })
   })
-  // ---------------------------------------
 
-  // - Handle add message
-  // ---------------------------------------
+  // - Handle add "Yes" message
   async function addYes() {
 
     // @ts-ignore
     const messageAccount = new web3.Keypair()
-  
+    
+    // - This handles the creation of the Message Account Public Key or the
+    //   PDA's public key.
     const [pda,] = await web3.PublicKey.findProgramAddressSync(
       [anchorProvider.wallet.publicKey.toBuffer()],
       program.programId
     )
-
+    
+    // - This whole block creates the transaction in order to create
+    //   the PDA itself on the program. (All of these are from idl.json)
+    //   
+    //   messageAccount -> The PDA Public Key.
+    //   signer -> Your Wallet's Public Key.
+    //   systemProgram -> The Program ID you deployed through anchor.
     await program.methods.addMessage("Yes").accounts({
       messageAccount: pda,
       signer: anchorProvider.wallet.publicKey,
@@ -114,17 +137,25 @@ function App() {
 
   }
 
+  // - Handle add "No" message
   async function addNo() {
 
     // @ts-ignore
     const messageAccount = new web3.Keypair()
 
-
+    // - This handles the creation of the Message Account Public Key or the
+    //   PDA's public key.
     const [pda,] = await web3.PublicKey.findProgramAddressSync(
       [anchorProvider.wallet.publicKey.toBuffer()],
       program.programId
     )
-
+    
+    // - This whole block creates the transaction in order to create
+    //   the PDA itself on the program. (All of these are from idl.json)
+    //   
+    //   messageAccount -> The PDA Public Key.
+    //   signer -> Your Wallet's Public Key.
+    //   systemProgram -> The Program ID you deployed through anchor.
     await program.methods.addMessage("No").accounts({
       messageAccount: pda,
       signer: anchorProvider.wallet.publicKey,
@@ -132,14 +163,22 @@ function App() {
     }).rpc()
   }
 
+  // - Handles fetching data from the blockchain.
   async function fetchData() {
     
+    // - Gets the accounts from the Program ID.
     const programAccounts = await connection.getProgramAccounts(programID)
 
+    // - Initialization of the variables that will be used.
     const total = programAccounts.length
     let yesCounter = 0
     let noCounter = 0
 
+    // - This code block is a loop which stores the Public Key and the message
+    //   from the Public Key, wether it's 'yes' or 'no', in the voteList so that
+    //   we can display it later.
+    // - The loop also calculates the percentage of the amount of people that
+    //   votes for yes and no.
     // @ts-ignore
     Promise.all((await connection.getProgramAccounts(programID)).map(async(tx, index) => {
       const messageAccount = program.account.messageAccount.fetch(tx.pubkey)

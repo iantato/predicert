@@ -1,5 +1,3 @@
-import { PhantomProvider } from "../types"
-
 const getProvider = () => {
 
     // - Check if the provider is Phantom Wallet or if 

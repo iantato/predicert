@@ -17,6 +17,7 @@ function App() {
   window.Buffer = buffer.Buffer
   const anyWindow: any = window
 
+  // @ts-ignore
   const [pubKey, setPubKey] = useState(null)
   const [buttonText, setButtonText] = useState("Connect Phantom Wallet")
   const [commentHidden, setHidden] = useState(false)
@@ -92,6 +93,7 @@ function App() {
   // ---------------------------------------
   async function addYes() {
 
+    // @ts-ignore
     const messageAccount = new web3.Keypair()
   
     const [pda,] = await web3.PublicKey.findProgramAddressSync(
@@ -110,6 +112,7 @@ function App() {
 
   async function addNo() {
 
+    // @ts-ignore
     const messageAccount = new web3.Keypair()
 
 
@@ -133,6 +136,7 @@ function App() {
     let yesCounter = 0
     let noCounter = 0
 
+    // @ts-ignore
     Promise.all((await connection.getProgramAccounts(programID)).map(async(tx, index) => {
       const messageAccount = program.account.messageAccount.fetch(tx.pubkey)
       messageAccount.then((msg) => {
